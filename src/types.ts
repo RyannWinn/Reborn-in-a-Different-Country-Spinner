@@ -17,4 +17,6 @@ export interface SpinResult {
   survivalProbability?: string;
   socialClass?: string;
   insight?: string;
+  rankings?: { category: string; rank: string }[];
+  cons?: string[];
 }

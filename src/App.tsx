@@ -442,6 +442,36 @@ export default function App() {
                         </p>
                       </div>
                     </div>
+
+                    {/* Rankings & Cons */}
+                    <div className="grid gap-6 pt-4">
+                      {result.rankings && (
+                        <div className="space-y-3">
+                          <h4 className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40">National Standing</h4>
+                          <div className="grid grid-cols-1 gap-2">
+                            {result.rankings.map((r, i) => (
+                              <div key={i} className="flex justify-between items-center py-2 border-b border-white/5">
+                                <span className="text-xs font-medium opacity-60">{r.category}</span>
+                                <span className="text-xs font-black text-vibrant-primary italic uppercase tracking-tighter">{r.rank}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {result.cons && (
+                        <div className="space-y-3">
+                          <h4 className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40">System Challenges (Cons)</h4>
+                          <div className="flex flex-wrap gap-2">
+                            {result.cons.map((con, i) => (
+                              <span key={i} className="px-3 py-1 bg-red-500/10 border border-red-500/20 rounded-full text-[10px] font-bold text-red-400 uppercase tracking-widest">
+                                {con}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   {result.insight && (

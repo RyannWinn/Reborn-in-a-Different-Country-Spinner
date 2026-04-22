@@ -18,6 +18,7 @@ export default function FateChoices({ questions, onComplete }: FateChoicesProps)
   const [currentIndex, setCurrentIndex] = useState(0);
   const [totalEffect, setTotalEffect] = useState(0);
   const [completed, setCompleted] = useState(false);
+  const [displayAge, setDisplayAge] = useState(0);
 
   const handleOption = (effect: number) => {
     const nextEffect = totalEffect + effect;
@@ -26,12 +27,30 @@ export default function FateChoices({ questions, onComplete }: FateChoicesProps)
     if (currentIndex < questions.length - 1) {
       setCurrentIndex(prev => prev + 1);
     } else {
-      // Final calculation
-      // Base age is 65, modified by effects
       const baseAge = 65;
       const finalAge = Math.max(1, Math.min(100, baseAge + nextEffect * 2));
       setCompleted(true);
-      onComplete(finalAge);
+      
+      // Animate age reveal
+      let start = 0;
+      const duration = 2000;
+      const startTime = performance.now();
+      
+      const animateAge = (currentTime: number) => {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const currentAge = Math.floor(progress * finalAge);
+        
+        setDisplayAge(currentAge);
+        
+        if (progress < 1) {
+          requestAnimationFrame(animateAge);
+        } else {
+          onComplete(finalAge);
+        }
+      };
+      
+      requestAnimationFrame(animateAge);
     }
   };
 
@@ -88,11 +107,19 @@ export default function FateChoices({ questions, onComplete }: FateChoicesProps)
             animate={{ opacity: 1 }}
             className="text-center py-12 space-y-6"
           >
-            <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-vibrant-primary/20 border-2 border-vibrant-primary mb-4">
-               <Heart className="h-10 w-10 text-vibrant-primary animate-pulse" />
+            <div className="relative inline-flex items-center justify-center w-32 h-32 rounded-full bg-vibrant-primary/10 border-2 border-vibrant-primary mb-4 overflow-hidden">
+               <motion.div 
+                 initial={{ y: 50, opacity: 0 }}
+                 animate={{ y: 0, opacity: 1 }}
+                 className="text-4xl font-black italic tracking-tighter text-vibrant-primary"
+               >
+                 {displayAge}
+               </motion.div>
+               <div className="absolute inset-0 bg-vibrant-primary/5 animate-pulse" />
             </div>
             <h3 className="text-3xl font-black uppercase italic tracking-tighter">Fate Determined</h3>
-            <p className="text-sm opacity-40 uppercase tracking-widest leading-relaxed">
+            <p className="text-[10px] font-mono text-vibrant-primary uppercase tracking-[0.4em] mb-2">Final Lifespan: {displayAge} Years</p>
+            <p className="text-[10px] opacity-40 uppercase tracking-widest leading-relaxed max-w-xs mx-auto">
               Based on your choices in this cycle, your life trajectory has been finalized.
             </p>
           </motion.div>

@@ -13,24 +13,43 @@ function getAI() {
   return aiInstance;
 }
 
-export async function getCountryInsight(countryName: string): Promise<{ city: string; survivalProbability: string; socialClass: string; insight: string }> {
+export async function getCountryInsight(countryName: string): Promise<{ 
+  city: string; 
+  survivalProbability: string; 
+  socialClass: string; 
+  insight: string;
+  rankings?: { category: string; rank: string }[];
+  cons?: string[];
+}> {
   try {
     const ai = getAI();
     
-    const prompt = `You are a "Rebirth Simulation" guide. A user has just been "reborn" in ${countryName}.
+    const prompt = `You are an expert global demographer and storyteller. A user is being "reborn" in ${countryName}.
+      
+      CRITICAL INSTRUCTION: You MUST select a real, distinct, and major city specifically within ${countryName}. 
+      Do NOT select Mumbai unless the country is India. 
+      Do NOT provide a generic response like "The Capital".
       
       Please provide:
-      1. A specific city in ${countryName}. RANDOMLY select one from at least 5 major cities.
-      2. A "Survival & Quality of Life" index percentage (0-100%).
+      1. A specific major city in ${countryName}.
+      2. A "Survival & Quality of Life" index percentage (0-100%) based on current data for that country.
       3. A "Social Class" simulation: "Low", "Medium", or "High".
-      4. A "Life Narrative": Write a 3-4 sentence story in the first person ("I was born into...") about what your life is like here based on the city, country, and class. Make it evocative, realistic, and character-driven (e.g., mention your home, a daily struggle or comfort, and a hope or fear).
+      4. A "Life Narrative": Write a 3-4 sentence evocative story in the first person ("I was born into...") describing your life based on this specific location and social class. Mention a local detail unique to ${countryName}.
+      5. Top 3 "Rankings": Identify the country's best global rankings (e.g., "Economy: Top 10", "Healthcare: #1 in region", "Infrastructure: High Quality").
+      6. Top 3 "Cons": Identify common challenges or drawbacks of living in ${countryName} (e.g., "High Cost of Living", "Bureacracy", "Climatic Extremes").
       
       Format the response as a JSON object:
       {
         "city": "City Name",
         "survivalProbability": "85%",
         "socialClass": "Medium",
-        "insight": "The life narrative story here..."
+        "insight": "The life narrative story here...",
+        "rankings": [
+          {"category": "Economy", "rank": "Top 15 Globally"},
+          {"category": "Healthcare", "rank": "#1 in Region"},
+          {"category": "Infrastructure", "rank": "Elite Tier"}
+        ],
+        "cons": ["Extreme Humidity", "Expensive Real Estate", "Traffic Congestion"]
       }`;
 
     const response = await ai.models.generateContent({
@@ -42,18 +61,20 @@ export async function getCountryInsight(countryName: string): Promise<{ city: st
     const jsonStr = text.replace(/```json|```/g, "").trim();
     const data = JSON.parse(jsonStr);
     
-    if (data.city === "Mumbai" && countryName !== "India") {
-      data.city = "The Capital";
-    }
-    
     return data;
   } catch (error) {
     console.error("Gemini Error:", error);
+    // Generic but country-appropriate fallback
     return {
-      city: countryName === "India" ? "Mumbai" : "The Capital",
+      city: "A Local City",
       survivalProbability: "75%",
       socialClass: "Medium",
-      insight: `My journey begins in the heart of ${countryName}. The air is filled with the sounds of a vibrant community, and though my future is unwritten, my spirit is resilient as I adapt to this new life.`
+      insight: `I was born in a bustling neighborhood in ${countryName}. My early memories are shaped by the local sounds and the unique character of this place, where I now strive to build a future.`,
+      rankings: [
+        { category: "Community", rank: "Very Strong" },
+        { category: "Resilience", rank: "High" }
+      ],
+      cons: ["Uncertain Future", "Economic Fluctuations"]
     };
   }
 }
