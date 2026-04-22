@@ -13,4 +13,8 @@ export interface Country {
 export interface SpinResult {
   country: Country;
   probability: number;
+  city?: string;
+  survivalProbability?: string;
+  socialClass?: string;
+  insight?: string;
 }

@@ -1,6 +1,6 @@
 {
-  "name": "Global Destiny Wheel",
-  "description": "A population-weighted fortune wheel that simulates your birth location based on global demographics.",
+  "name": "Rebirth",
+  "description": "Simulate your rebirth in a different country with population-weighted odds, city simulation, and survival probability insights.",
   "requestFramePermissions": [],
   "majorCapabilities": []
 }
